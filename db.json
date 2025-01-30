@@ -1,0 +1,11 @@
+{
+    "trips": [
+      {
+        "id": 1,
+        "departureDateTime": "2024-03-20T08:00",
+        "originState": "MA",
+        "destinationState": "DF",
+        "seatsAvailable": 40
+      }
+    ]
+  }

@@ -1,29 +1,16 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { CITIES_BY_STATE, City, getCityState } from "../lib/citites";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { CITIES_BY_STATE, City } from "../lib/citites";
+import { useTravelAvailability } from "../hooks/useTravelAvailability";
+import { formatDate } from "../utils/formatDate";
 
-export function ReservationForm() {
+export default function ReservationForm() {
 
   const [departureCity, setDepartureCity] = useState<City | "">("");
   const [arrivalCity, setArrivalCity] = useState<City | "">("");
   const [departureDate, setDepartureDate] = useState<string>("");
   const [arrivalDate, setArrivalDate] = useState<string>("");
-  const [availableArrivalCities, setAvailableArrivalCities] = useState<City[]>(
-    []
-  );
 
-  useEffect(() => {
-    if (!departureCity) {
-      setAvailableArrivalCities([]);
-      return;
-    }
-
-    const departureState = getCityState(departureCity);
-    const arrivalCities =
-      departureState === "MA" ? CITIES_BY_STATE.DF : CITIES_BY_STATE.MA;
-
-    setAvailableArrivalCities([...arrivalCities]);
-    setArrivalCity(""); // Resetar cidade de desembarque ao mudar embarque
-  }, [departureCity]);
+  const { arrivalCities, departureDates } = useTravelAvailability(departureCity);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +38,7 @@ export function ReservationForm() {
         <select
           id="departureCity"
           value={departureCity}
-          onChange={(e) => setDepartureCity((e.target.value as City) || "")}
+          onChange={(e) => setDepartureCity(e.target.value as City)}
         >
           <option value="">Selecione uma cidade</option>
           {[...CITIES_BY_STATE.MA, ...CITIES_BY_STATE.DF].map((city, index) => (
@@ -67,11 +54,11 @@ export function ReservationForm() {
         <select
           id="arrivalCity"
           value={arrivalCity}
-          onChange={(e) => setArrivalCity((e.target.value as City) || "")}
+          onChange={(e) => setArrivalCity(e.target.value as City)}
           disabled={!departureCity}
         >
           <option value="">Selecione uma cidade</option>
-          {availableArrivalCities.map((city, index) => (
+          {arrivalCities.map((city, index) => (
             <option key={index} value={city}>
               {city}
             </option>
@@ -81,14 +68,19 @@ export function ReservationForm() {
 
       <div className="form-field">
         <label htmlFor="departureDate">Data de Embarque</label>
-        <input
-          type="date"
+        <select
           id="departureDate"
           value={departureDate}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setDepartureDate(e.target.value)
-          }
-        />
+          onChange={(e) => setDepartureDate(e.target.value)}
+          disabled={!departureCity}
+        >
+          <option value="">Selecione uma data</option>
+          {departureDates.map((date, index) => (
+            <option key={index} value={date.toISOString()}>
+              {formatDate(date)}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="form-field">
@@ -100,6 +92,7 @@ export function ReservationForm() {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setArrivalDate(e.target.value)
           }
+          min={departureDate.split('T')[0]} // Restringe datas anteriores à de embarque
         />
       </div>
 

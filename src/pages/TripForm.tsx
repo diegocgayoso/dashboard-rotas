@@ -1,106 +1,115 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import { StateSelect, StateType } from "../components/StateSelect";
+import { useState, FormEvent } from "react";
 
+// Define o tipo para os estados, facilitando a reutilização e evitando erros de digitação
+
+
+// Interface para tipar os dados da viagem
 interface Trip {
   departureDateTime: string;
-  originState: 'MA' | 'DF';
-  destinationState: 'MA' | 'DF';
+  originState: StateType;
+  destinationState: StateType;
   seatsAvailable: number;
 }
 
-const TripForm: React.FC = () => {
+// Componente para selecionar o estado, reutilizável para origem e destino
+
+
+
+export default function TripForm() {
   const [trip, setTrip] = useState<Trip>({
-    departureDateTime: '',
-    originState: 'MA',
-    destinationState: 'DF',
-    seatsAvailable: 40
+    departureDateTime: "",
+    originState: "",
+    destinationState: "",
+    seatsAvailable: 0,
   });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch('http://localhost:3001/trips', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/trips", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...trip,
-          departureDateTime: new Date(trip.departureDateTime).toISOString()
-        })
+          departureDateTime: new Date(trip.departureDateTime).toISOString(),
+        }),
       });
 
       if (response.ok) {
-        alert('Viagem cadastrada com sucesso!');
+        alert("Viagem cadastrada com sucesso!");
         setTrip({
-          departureDateTime: '',
-          originState: 'MA',
-          destinationState: 'DF',
-          seatsAvailable: 40
+          departureDateTime: "",
+          originState: "",
+          destinationState: "",
+          seatsAvailable: 0,
         });
+      } else {
+        const errorData = await response.json(); // Tenta obter detalhes do erro do servidor
+        console.error("Erro ao cadastrar viagem:", response.status, errorData);
+        alert(`Erro ao cadastrar viagem: ${response.status}`); // Exibe mensagem de erro para o usuário
       }
     } catch (error) {
-      console.error('Erro ao cadastrar viagem:', error);
+      console.error("Erro ao cadastrar viagem:", error);
+      alert("Erro ao cadastrar viagem. Verifique o console para mais detalhes."); // Mensagem genérica para o usuário
     }
   };
 
-  const handleStateChange = (stateType: 'origin' | 'destination') => 
-    (e: ChangeEvent<HTMLSelectElement>) => {
-      const value = e.target.value as 'MA' | 'DF';
-      setTrip(prev => ({
-        ...prev,
-        originState: stateType === 'origin' ? value : prev.originState,
-        destinationState: stateType === 'destination' ? value : prev.destinationState
-      }));
-    };
+  const handleOriginStateChange = (value: StateType) => {
+    setTrip((prev) => ({ ...prev, originState: value }));
+  };
+
+  const handleDestinationStateChange = (value: StateType) => {
+    setTrip((prev) => ({ ...prev, destinationState: value }));
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Data e Hora de Saída</label>
-        <input
-          type="datetime-local"
-          value={trip.departureDateTime}
-          onChange={(e) => setTrip({...trip, departureDateTime: e.target.value})}
-          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-
-      <div className="mb-4 grid grid-cols-2 gap-4">
+    <div>
+      <form onSubmit={handleSubmit} className="form-group flex-col ">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Estado de Origem</label>
-          <select
+          <StateSelect
             value={trip.originState}
-            onChange={handleStateChange('origin')}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-          >
-            <option value="MA">Maranhão</option>
-            <option value="DF">Distrito Federal</option>
-          </select>
-        </div>
+            onChange={handleOriginStateChange}
+            excludedState={trip.destinationState}
+            label="Estado de Origem"
+          />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Estado de Destino</label>
-          <select
+          <StateSelect
             value={trip.destinationState}
-            onChange={handleStateChange('destination')}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-          >
-            <option value="DF">Distrito Federal</option>
-            <option value="MA">Maranhão</option>
-          </select>
+            onChange={handleDestinationStateChange}
+            excludedState={trip.originState}
+            label="Estado de Destino"
+          />
+
+          <div className="form-field w-full  ">
+            <label className="block text-sm font-medium text-gray-700">
+              Data e Hora de Saída
+            </label>
+            <input
+              type="datetime-local"
+              value={trip.departureDateTime}
+              onChange={(e) =>
+                setTrip({ ...trip, departureDateTime: e.target.value })
+              }
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              required
+            />
+          </div>
+          <div className="form-field w-full">
+          <label className="block text-sm font-medium text-gray-700">
+              Número de poltronas
+            </label>
+            <input type="number" name="seatsAvailable" id="" min={0} max={50} value={trip.seatsAvailable} onChange={(e) => setTrip({ ...trip, seatsAvailable: Number(e.target.value) })       } />
+          </div>
         </div>
-      </div>
 
-      <button
-        type="submit"
-        className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
-      >
-        Cadastrar Viagem
-      </button>
-    </form>
+        <button type="submit" className="btn-submit ">
+          Cadastrar Viagem
+        </button>
+      </form>
+    </div>
   );
-};
-
-export default TripForm;
+}

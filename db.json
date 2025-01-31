@@ -1,11 +1,32 @@
 {
-    "trips": [
-      {
-        "id": 1,
-        "departureDateTime": "2024-03-20T08:00",
-        "originState": "MA",
-        "destinationState": "DF",
-        "seatsAvailable": 40
-      }
-    ]
-  }
+  "trips": [
+    {
+      "id": "1",
+      "departureDateTime": "2024-03-20T08:00",
+      "originState": "MA",
+      "destinationState": "DF",
+      "seatsAvailable": 40
+    },
+    {
+      "id": "ffce",
+      "departureDateTime": "2025-02-04T23:00:00.000Z",
+      "originState": "MA",
+      "destinationState": "DF",
+      "seatsAvailable": 46
+    },
+    {
+      "id": "3d6a",
+      "departureDateTime": "2025-02-25T13:00:00.000Z",
+      "originState": "DF",
+      "destinationState": "MA",
+      "seatsAvailable": 46
+    },
+    {
+      "id": "524c",
+      "departureDateTime": "2025-03-07T15:00:00.000Z",
+      "originState": "DF",
+      "destinationState": "MA",
+      "seatsAvailable": 40
+    }
+  ]
+}

@@ -4,13 +4,13 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import TripForm from "./pages/TripForm";
-import { ReservationForm } from "./pages/ReservationForm";
+import ReservationForm from "./pages/ReservationForm";
 
 function App() {
   // const title = "Rota dos Guarás";
 
   return (
-    <Router >
+    <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />

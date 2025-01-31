@@ -35,7 +35,7 @@ h1 {
 }
 
 .main {
-  @apply h-full;
+  @apply min-h-screen flex ;
 }
 
 @layer components {
@@ -70,6 +70,6 @@ h1 {
     }
   }
   .btn-submit {
-    @apply bg-sky-900 px-4 py-2 rounded;
+    @apply bg-sky-900 px-4 py-2 rounded hover:text-zinc-200 duration-500 shadow-xl hover:shadow-zinc-950;
   }
 }

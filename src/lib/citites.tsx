@@ -37,3 +37,5 @@ export const CITIES_BY_STATE = {
   ] as const,
   DF: ["Brasília", "Taguatinga", "Ceilândia", "Gama"] as const,
 };
+
+export const getStates = (): State[] => ["MA", "DF"];

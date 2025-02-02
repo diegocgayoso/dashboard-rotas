@@ -1,69 +1,58 @@
+import { createTrip } from "../service/api";
 import { StateSelect, StateType } from "../components/StateSelect";
-import { useState, FormEvent } from "react";
-
-// Define o tipo para os estados, facilitando a reutilização e evitando erros de digitação
-
-
-// Interface para tipar os dados da viagem
-interface Trip {
-  departureDateTime: string;
-  originState: StateType;
-  destinationState: StateType;
-  seatsAvailable: number;
-}
-
-// Componente para selecionar o estado, reutilizável para origem e destino
-
-
+import { useState, FormEvent, useEffect } from "react";
 
 export default function TripForm() {
-  const [trip, setTrip] = useState<Trip>({
+  const [trip, setTrip] = useState({
     departureDateTime: "",
-    originState: "",
-    destinationState: "",
+    originState: "" as StateType,
+    destinationState: "" as StateType,
     seatsAvailable: 0,
   });
 
+  useEffect(() => {
+    if (trip.originState === trip.destinationState && trip.originState !== "") {
+      setTrip((prev) => ({
+        ...prev,
+        destinationState: "",
+      }));
+    }
+  }, [trip.destinationState, trip.originState]);
+
+  useEffect(() => {
+    if (
+      trip.destinationState === trip.originState &&
+      trip.destinationState !== ""
+    ) {
+      setTrip((prev) => ({
+        ...prev,
+        originState: "",
+      }));
+    }
+  }, [trip.destinationState, trip.originState]);
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
+    if (trip.originState === trip.destinationState) {
+      alert("Origem e destino não podem ser iguais!");
+      return;
+    }
     try {
-      const response = await fetch("http://localhost:3001/trips", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...trip,
-          departureDateTime: new Date(trip.departureDateTime).toISOString(),
-        }),
+      await createTrip(trip);
+      alert("Viagem cadastrada com sucesso!");
+      setTrip({
+        departureDateTime: "",
+        originState: "",
+        destinationState: "",
+        seatsAvailable: 0,
       });
-
-      if (response.ok) {
-        alert("Viagem cadastrada com sucesso!");
-        setTrip({
-          departureDateTime: "",
-          originState: "",
-          destinationState: "",
-          seatsAvailable: 0,
-        });
-      } else {
-        const errorData = await response.json(); // Tenta obter detalhes do erro do servidor
-        console.error("Erro ao cadastrar viagem:", response.status, errorData);
-        alert(`Erro ao cadastrar viagem: ${response.status}`); // Exibe mensagem de erro para o usuário
-      }
     } catch (error) {
       console.error("Erro ao cadastrar viagem:", error);
-      alert("Erro ao cadastrar viagem. Verifique o console para mais detalhes."); // Mensagem genérica para o usuário
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Erro ao cadastrar viagem. Verifique o console para mais detalhes."
+      ); // Mensagem genérica para o usuário
     }
-  };
-
-  const handleOriginStateChange = (value: StateType) => {
-    setTrip((prev) => ({ ...prev, originState: value }));
-  };
-
-  const handleDestinationStateChange = (value: StateType) => {
-    setTrip((prev) => ({ ...prev, destinationState: value }));
   };
 
   return (
@@ -72,14 +61,18 @@ export default function TripForm() {
         <div>
           <StateSelect
             value={trip.originState}
-            onChange={handleOriginStateChange}
+            onChange={(value) =>
+              setTrip((prev) => ({ ...prev, originState: value }))
+            }
             excludedState={trip.destinationState}
             label="Estado de Origem"
           />
 
           <StateSelect
             value={trip.destinationState}
-            onChange={handleDestinationStateChange}
+            onChange={(value) =>
+              setTrip((prev) => ({ ...prev, destinationState: value }))
+            }
             excludedState={trip.originState}
             label="Estado de Destino"
           />
@@ -99,10 +92,20 @@ export default function TripForm() {
             />
           </div>
           <div className="form-field w-full">
-          <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700">
               Número de poltronas
             </label>
-            <input type="number" name="seatsAvailable" id="" min={0} max={50} value={trip.seatsAvailable} onChange={(e) => setTrip({ ...trip, seatsAvailable: Number(e.target.value) })       } />
+            <input
+              type="number"
+              name="seatsAvailable"
+              id=""
+              min={0}
+              max={50}
+              value={trip.seatsAvailable}
+              onChange={(e) =>
+                setTrip({ ...trip, seatsAvailable: Number(e.target.value) })
+              }
+            />
           </div>
         </div>
 

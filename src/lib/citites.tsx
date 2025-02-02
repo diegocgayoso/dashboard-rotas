@@ -34,6 +34,7 @@ export const CITIES_BY_STATE = {
     "3 Marias",
     "Central",
     "Porto Rico",
+    ""
   ] as const,
   DF: ["Brasília", "Taguatinga", "Ceilândia", "Gama"] as const,
 };

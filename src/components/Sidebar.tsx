@@ -16,7 +16,7 @@ export default function Sidebar() {
           <Link to="/tripForm">Viagens</Link>
         </li>
         <li>
-          <Link to="/reservationForm">Reservas</Link>
+          <Link to="/fetchTrips">Reservas</Link>
         </li>
       </ul>
     </nav>

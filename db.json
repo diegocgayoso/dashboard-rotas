@@ -8,25 +8,26 @@
       "seatsAvailable": 40
     },
     {
-      "id": "ffce",
+      "id": "2",
       "departureDateTime": "2025-02-04T23:00:00.000Z",
       "originState": "MA",
       "destinationState": "DF",
       "seatsAvailable": 46
     },
     {
-      "id": "3d6a",
+      "id": "3",
       "departureDateTime": "2025-02-25T13:00:00.000Z",
       "originState": "DF",
       "destinationState": "MA",
       "seatsAvailable": 46
     },
     {
-      "id": "524c",
+      "id": "4",
       "departureDateTime": "2025-03-07T15:00:00.000Z",
       "originState": "DF",
       "destinationState": "MA",
       "seatsAvailable": 40
     }
-  ]
+  ],
+  "reservations": []
 }

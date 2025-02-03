@@ -1,3 +1,4 @@
+import { formatDate } from "../utils/formatDate";
 import { fetchTrips } from "../service/api";
 import { useEffect, useState } from "react";
 
@@ -11,7 +12,7 @@ export default function CardWrapper() {
       try {
         const trips = await fetchTrips();
         setTripCount(trips.length);
-      } catch  {
+      } catch {
         setError("Erro ao carregar viagens");
       } finally {
         setLoadind(false);
@@ -19,8 +20,8 @@ export default function CardWrapper() {
     };
     loadTrips();
   }, []);
-  if(loading) return <div>Carregando...</div>
-  if(error) return <div>{error}</div>
+  if (loading) return <div>Carregando...</div>;
+  if (error) return <div>{error}</div>;
   return (
     <div className="flex gap-2 justify-center">
       <Card title="Viagens registradas" value={tripCount ?? 0} />
@@ -43,6 +44,32 @@ export function Card({
       <p className="truncate rounded-xl bg-zinc-950 px-4 py-8 text-center text-gray-400 text-2xl">
         {value}
       </p>
+    </div>
+  );
+}
+
+export function TripCard({
+  id,
+  departure,
+  arrival,
+  dateTime,
+}: {
+  id: string;
+  departure: string;
+  arrival: string;
+  dateTime: Date;
+}) {
+  return (
+    <div className="trip-card">
+      <h3 className="text-sm font-medium  text-gray-300">#{id}</h3>
+      <div className="flex flex-col gap-4 items-end">
+        <p className="text-center text-gray-400 text-2xl">
+          De: {departure} Para: {arrival}
+        </p>
+        <p className="   text-center text-gray-400 text-2xl">
+          Data e Hora: {formatDate(new Date(dateTime))}
+        </p>
+      </div>
     </div>
   );
 }

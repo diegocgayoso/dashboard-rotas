@@ -1,0 +1,37 @@
+{
+    "cities": {
+        "MA": [
+            "Imperatriz",
+            "Açailândia",
+            "Bom Jesus da Selva",
+            "Buriticupu",
+            "Santa Luzia",
+            "Santa Inês",
+            "Igarapé do Meio",
+            "Vitória do Mearim",
+            "Viana",
+            "Santeiro",
+            "Matinha",
+            "Olinda",
+            "Bom Viver",
+            "São Vicente",
+            "Zé de Mariana",
+            "São Bento",
+            "Pinheiro",
+            "Ponta Branca",
+            "Cedral",
+            "São Luis",
+            "Cururupu",
+            "Mirinzal",
+            "3 Marias",
+            "Central",
+            "Porto Rico"
+        ],
+        "DF": [
+            "Brasília",
+            "Taguatinga",
+            "Ceilândia",
+            "Gama"
+        ]
+    }
+}

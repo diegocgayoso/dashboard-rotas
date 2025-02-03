@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
-import Home from "./pages/Home";
-import Layout from "./components/Layout";
 import TripForm from "./pages/TripForm";
-import ReservationForm from "./pages/ReservationForm";
+import Layout from "./Layout";
+import Home from "./pages/Home";
+import FetchTripsForm from "./pages/FetchTripsForm";
+
 
 function App() {
   // const title = "Rota dos Guarás";
-
   return (
     <Router>
       <Routes>
@@ -16,7 +16,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tripForm" element={<TripForm />} />
-          <Route path="/reservationForm" element={<ReservationForm />} />
+          <Route path="/fetchTrips" element={<FetchTripsForm />} />
         </Route>
       </Routes>
     </Router>
@@ -24,11 +24,3 @@ function App() {
 }
 
 export default App;
-
-// <div className="main">
-//   <div className="p-4 w-full">
-//     <h1 className="logo">{title}</h1>
-//     <Home />
-//     <Dashboard />
-//   </div>
-// </div>

@@ -1,4 +1,4 @@
-import { City } from "../lib/citites";
+import { State } from "../lib/cities";
 
 const api_url = "http://localhost:3000";
 
@@ -66,16 +66,21 @@ export const fetchReservations = async () => {
   return response.json();
 };
 export const fetchAvailableTrips = async (
-  origin: City,
-  destination: City,
+  origin: State,
+  destination: State,
+  departureDate: Date = new Date(), // Novo parâmetro opcional
+  minSeats: number = 1 // Novo parâmetro opcional
 ): Promise<Trip[]> => {
-  const response = await fetch(api_url + `/trips?originState=${origin.split('-')[1]}&destinationState=${destination.split('-')[1]}`);
-  if (!response.ok) throw new Error(`Erro ao buscar viagens disponíveis. Status: ${response.status}`);
-  const allTrips: Trip[] = await response.json();
+  const queryParams = new URLSearchParams({
+    originState: origin.split('-')[1],
+    destinationState: destination.split('-')[1],
+    departureDate: departureDate.toISOString().split('T')[0], // Data formatada
+    minSeats: minSeats.toString() // Mínimo de assentos
+  });
+
+  const response = await fetch(`${api_url}/trips?${queryParams}`);
   
-  return allTrips.filter(trip => 
-    new Date(trip.departureDateTime) >= new Date() && // Viagens futuras
-    trip.seatsAvailable > 0 && // Com vagas disponíveis
-    trip.departureDateTime.startsWith(new Date().toISOString().split('T')[0]) // Na data selecionada
-  );
-}
+  if (!response.ok) throw new Error(`Erro ao buscar viagens. Status: ${response.status}`);
+  
+  return await response.json(); // Assume que o servidor já retorna filtrado
+};

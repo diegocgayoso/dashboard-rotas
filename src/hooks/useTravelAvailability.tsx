@@ -1,13 +1,30 @@
-import { CITIES_BY_STATE, City, getCityState, State } from "../lib/citites";
+import { AllCities, CITIES_BY_STATE, getCityState, State } from "../lib/cities";
 import { DEPARTURE_DATES_BY_STATE } from "../lib/dates";
 import { useState, useEffect } from "react";
 
+// 1. Criar tipo para mapeamento de destinos
+type AllowedDestinations = {
+  [key in State]: readonly AllCities[];
+};
+
+// 2. Definir regras de destinos permitidos
+const DESTINATION_RULES: AllowedDestinations = {
+  // MA: CITIES_BY_STATE.DF,
+  // DF: CITIES_BY_STATE.MA,
+  // SP: CITIES_BY_STATE.SP 
+  // Exemplo: permitir viagens dentro do mesmo estado
+  // Adicione novas regras para outros estados aqui
+  MA: [...CITIES_BY_STATE.DF, ...CITIES_BY_STATE.SP], // Exemplo: MA permite DF e SP
+  DF: [...CITIES_BY_STATE.MA, ...CITIES_BY_STATE.SP],
+  SP: [...CITIES_BY_STATE.MA, ...CITIES_BY_STATE.DF, ...CITIES_BY_STATE.SP]
+};
+
 export type TravelAvailability = {
-  arrivalCities: City[];
+  arrivalCities: AllCities[];
   departureDates: Date[];
 };
 
-export function useTravelAvailability(departureCity: City | "") {
+export function useTravelAvailability(departureCity: AllCities | null) {
   const [availability, setAvailability] = useState<TravelAvailability>({
     arrivalCities: [],
     departureDates: [],
@@ -19,15 +36,26 @@ export function useTravelAvailability(departureCity: City | "") {
       return;
     }
 
-    const departureState = getCityState(departureCity) as State;
-    const arrivalCities =
-      departureState === "MA" ? CITIES_BY_STATE.DF : CITIES_BY_STATE.MA;
-    const departureDates = DEPARTURE_DATES_BY_STATE[departureState];
+    try {
+      const departureState = getCityState(departureCity);
+      
+      // 3. Obter destinos baseado nas regras
+      const arrivalCities = DESTINATION_RULES[departureState]
+        ? [...DESTINATION_RULES[departureState]]
+        : [];
 
-    setAvailability({
-      arrivalCities: [...arrivalCities],
-      departureDates: [...departureDates],
-    });
+      // 4. Validar datas de partida
+      const departureDates = DEPARTURE_DATES_BY_STATE[departureState] || [];
+
+      setAvailability({
+        arrivalCities: arrivalCities.filter(city => city !== departureCity),
+        departureDates: [...departureDates]
+      });
+
+    } catch (error) {
+      console.error("Erro ao buscar disponibilidade:", error);
+      setAvailability({ arrivalCities: [], departureDates: [] });
+    }
   }, [departureCity]);
 
   return availability;

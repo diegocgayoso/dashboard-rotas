@@ -1,17 +1,11 @@
 import { AllCities } from "../lib/cities";
-import { StateType } from "../components/StateSelect";
 
-import axios from "axios";
+import axios, {  AxiosPromise } from "axios";
+import { Trip } from "@/interfaces/ITrips";
 
 const api_url = "http://localhost:3000";
 
-export interface Trip {
-  id: number;
-  departureDateTime: string;
-  originState: StateType;
-  destinationState: StateType;
-  seatsAvailable: number;
-}
+
 export interface Reservation {
   id: number;
   tripId: number;
@@ -21,9 +15,9 @@ export interface Reservation {
   departureCity: AllCities;
   arrivalCity: AllCities;
 }
-export const getTrips = async () => {
-  const response = await axios.get<Trip[]>(`${api_url}/trips`);
-  return response.data;
+export const getTrips = async (): AxiosPromise<Trip[]> => {
+  const response = await axios.get<Trip[]>(api_url + `/trips`);
+  return response;
 };
 
 export const getTripById = async (id: number): Promise<Trip> => {
@@ -40,9 +34,11 @@ export const createTrip = async (trip: Omit<Trip, "id">) => {
   const response = await axios.post<Trip>(`${api_url}/trips`, trip);
   return response.data;
 };
-export const getReservationsByTripId = async (tripId: number) => {
+export const getReservationsByTripId = async (tripId: number) : AxiosPromise<Reservation[]>  => {
   const response = await axios.get<Reservation[]>(
     `${api_url}/reservations?tripId=${tripId}`
   );
-  return response.data;
+  return response;
 };
+
+

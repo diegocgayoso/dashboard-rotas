@@ -1,5 +1,5 @@
-import { StateSelect, StateType } from "../components/StateSelect";
 import { createTrip } from "../service/api";
+import { StateSelect, StateType } from "../components/StateSelect";
 import { FormEvent, useEffect, useState } from "react";
 
 export default function TripForm() {

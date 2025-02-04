@@ -10,13 +10,10 @@ export default function Sidebar() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/dashboard">Dashboard</Link>
-        </li>
-        <li>
           <Link to="/trips">Viagens</Link>
         </li>
         <li>
-          <Link to="/fetchTrips">Reservas</Link>
+          <Link to="/" >Reservas</Link>
         </li>
       </ul>
     </nav>

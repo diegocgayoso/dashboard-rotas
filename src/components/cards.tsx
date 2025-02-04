@@ -10,7 +10,7 @@ export default function CardWrapper() {
     const loadTrips = async () => {
       try {
         const trips = await getTrips();
-        setTripCount(trips.length);
+        setTripCount(trips.data.length);
       } catch {
         setError("Erro ao carregar viagens");
       } finally {
@@ -49,7 +49,7 @@ export function Card({
 }
 
 type TripCardProps = {
-  id: number;
+  id: number | string;
   departure: string;
   arrival: string;
   dateTime: Date;

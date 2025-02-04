@@ -1,60 +1,49 @@
-import { createTrip } from "../service/api";
 import { StateSelect, StateType } from "../components/StateSelect";
-import { useState, FormEvent, useEffect } from "react";
+import { createTrip } from "../service/api";
+import { FormEvent, useEffect, useState } from "react";
 
 export default function TripForm() {
   const [trip, setTrip] = useState({
     departureDateTime: "",
-    originState: "" as StateType,
-    destinationState: "" as StateType,
+    originState: "" as StateType | "",
+    destinationState: "" as StateType | "",
     seatsAvailable: 0,
   });
 
   useEffect(() => {
-    if (trip.originState === trip.destinationState && trip.originState !== "") {
-      setTrip((prev) => ({
-        ...prev,
-        destinationState: "",
-      }));
+    if ( trip.originState && trip.destinationState &&
+      trip.originState === trip.destinationState ) {
+      alert("Origem e Destino devem ser diferentes");
+      setTrip((prev) => ({ ...prev, destinationState: "" }));
     }
-  }, [trip.destinationState, trip.originState]);
+  }, [trip.originState, trip.destinationState]);
 
-  useEffect(() => {
-    if (
-      trip.destinationState === trip.originState &&
-      trip.destinationState !== ""
-    ) {
-      setTrip((prev) => ({
-        ...prev,
-        originState: "",
-      }));
-    }
-  }, [trip.destinationState, trip.originState]);
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (trip.originState === trip.destinationState) {
-      alert("Origem e destino não podem ser iguais!");
+
+    if(!trip.originState || !trip.destinationState) {
+      alert("Origem e Destino devem ser selecionados");
       return;
     }
+
     try {
-      await createTrip(trip);
+      await createTrip({
+        ...trip,
+        originState: trip.originState as StateType,
+        destinationState: trip.destinationState as StateType,
+      });
       alert("Viagem cadastrada com sucesso!");
       setTrip({
         departureDateTime: "",
         originState: "",
         destinationState: "",
         seatsAvailable: 0,
-      });
+      })
     } catch (error) {
-      console.error("Erro ao cadastrar viagem:", error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Erro ao cadastrar viagem. Verifique o console para mais detalhes."
-      ); // Mensagem genérica para o usuário
+      console.log("Erro ao cadastrar viagem:",error);
+      alert("Erro ao cadastrar viagem. Verifique o console.");
     }
-  };
-
+  }
   return (
     <div>
       <form onSubmit={handleSubmit} className="form-group flex-col ">

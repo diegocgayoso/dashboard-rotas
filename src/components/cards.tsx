@@ -1,5 +1,4 @@
-import { formatDate } from "../utils/formatDate";
-import { fetchTrips } from "../service/api";
+import { getTrips } from "../service/api";
 import { useEffect, useState } from "react";
 
 export default function CardWrapper() {
@@ -10,7 +9,7 @@ export default function CardWrapper() {
   useEffect(() => {
     const loadTrips = async () => {
       try {
-        const trips = await fetchTrips();
+        const trips = await getTrips();
         setTripCount(trips.length);
       } catch {
         setError("Erro ao carregar viagens");
@@ -18,6 +17,7 @@ export default function CardWrapper() {
         setLoadind(false);
       }
     };
+
     loadTrips();
   }, []);
   if (loading) return <div>Carregando...</div>;
@@ -48,26 +48,35 @@ export function Card({
   );
 }
 
+type TripCardProps = {
+  id: number;
+  departure: string;
+  arrival: string;
+  dateTime: Date;
+  availableSeats: number;
+};
 export function TripCard({
   id,
   departure,
   arrival,
   dateTime,
-}: {
-  id: string;
-  departure: string;
-  arrival: string;
-  dateTime: Date;
-}) {
+  availableSeats,
+}: TripCardProps) {
   return (
     <div className="trip-card">
       <h3 className="text-sm font-medium  text-gray-300">#{id}</h3>
       <div className="flex flex-col gap-4 items-end">
-        <p className="text-center text-gray-400 text-2xl">
-          De: {departure} Para: {arrival}
+        <h3 className="text-center text-gray-400 text-2xl">
+          {departure} → {arrival}
+        </h3>
+        <p className="   text-center text-gray-400 text-2xl">
+        Data: {dateTime.toLocaleDateString("pt-BR")}
         </p>
         <p className="   text-center text-gray-400 text-2xl">
-          Data e Hora: {formatDate(new Date(dateTime))}
+        Hora: {dateTime.toLocaleTimeString("pt-BR")}
+        </p>
+        <p className="   text-center text-gray-400 text-2xl">
+        Assentos disponíveis: {availableSeats}
         </p>
       </div>
     </div>

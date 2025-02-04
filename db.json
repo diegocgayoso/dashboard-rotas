@@ -2,14 +2,14 @@
   "trips": [
     {
       "id": "1",
-      "departureDateTime": "2024-03-20T08:00",
+      "departureDateTime": "2024-04-20T12:00",
       "originState": "MA",
       "destinationState": "DF",
       "seatsAvailable": 40
     },
     {
       "id": "2",
-      "departureDateTime": "2025-02-04T23:00:00.000Z",
+      "departureDateTime": "2025-03-24T22:00",
       "originState": "MA",
       "destinationState": "DF",
       "seatsAvailable": 46
@@ -29,5 +29,42 @@
       "seatsAvailable": 40
     }
   ],
-  "reservations": []
+  "reservations": [
+    {
+      "id": "11",
+      "tripId": "1",
+      "passengerName": "João Silva",
+      "reservationDate": "2024-03-19T10:00",
+      "seatNumber": 1,
+      "departureCity": "Imperatriz",
+      "arrivalCity": "Brasília"
+    },
+    {
+      "id": "12",
+      "tripId": "2",
+      "passengerName": "Kleiton Silva",
+      "reservationDate": "2024-03-19T10:00",
+      "seatNumber": 1,
+      "departureCity": "Imperatriz",
+      "arrivalCity": "Brasília"
+    },
+    {
+      "id": "13",
+      "tripId": "3",
+      "passengerName": "Marcos Silva",
+      "reservationDate": "2024-03-19T10:00",
+      "seatNumber": 1,
+      "departureCity": "Imperatriz",
+      "arrivalCity": "Brasília"
+    },
+    {
+      "id": "14",
+      "tripId": "4",
+      "passengerName": "Baku Go",
+      "reservationDate": "2024-03-19T10:00",
+      "seatNumber": 1,
+      "departureCity": "Imperatriz",
+      "arrivalCity": "Brasília"
+    }
+  ]
 }

@@ -1,19 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { AllCities, getAllCities, getCityState } from "../lib/cities";
 import { useTravelAvailability } from "../hooks/useTravelAvailability";
-import { fetchTrips, Trip } from "../service/api";
+import { getTrips, Trip } from "../service/api";
 import { TripCard } from "../components/cards";
 
-// type TravelData = {
-//   departure: {
-//     city: City;
-//     state: State;
-//   };
-//   arrival: {
-//     city: City;
-//     state: State;
-//   };
-// };
 export default function FetchTripsForm() {
   const [departureCity, setDepartureCity] = useState<AllCities | null>(null);
   const [arrivalCity, setArrivalCity] = useState<AllCities | null>(null);
@@ -53,7 +43,7 @@ export default function FetchTripsForm() {
     console.log("Buscando viagens...");
     try {
       setIsLoading(true);
-      const response = await fetchTrips();
+      const response = await getTrips();
       if (response.length > 0) {
         setTrips(response);
       }
@@ -62,7 +52,7 @@ export default function FetchTripsForm() {
     } catch (error) {
       console.log(error);
     }
-    const fetchedTrips = await fetchTrips();
+    const fetchedTrips = await getTrips();
     if (fetchedTrips.length > 0) {
       setTrips(fetchedTrips);
     } else {

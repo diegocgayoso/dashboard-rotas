@@ -13,7 +13,7 @@ export default function Sidebar() {
           <Link to="/dashboard">Dashboard</Link>
         </li>
         <li>
-          <Link to="/tripForm">Viagens</Link>
+          <Link to="/trips">Viagens</Link>
         </li>
         <li>
           <Link to="/fetchTrips">Reservas</Link>

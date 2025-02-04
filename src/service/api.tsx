@@ -15,7 +15,7 @@ export interface Reservation {
   departureCity: AllCities;
   arrivalCity: AllCities;
 }
-export const getTrips = async (): AxiosPromise<Trip[] > => {
+export const getTrips = async (): AxiosPromise<Trip[]> => {
   const response = await axios.get<Trip[]>(api_url + `/trips`);
   return response;
 };
@@ -34,9 +34,11 @@ export const createTrip = async (trip: Omit<Trip, "id">) => {
   const response = await axios.post<Trip>(`${api_url}/trips`, trip);
   return response.data;
 };
-export const getReservationsByTripId = async (tripId: number) => {
+export const getReservationsByTripId = async (tripId: number) : AxiosPromise<Reservation[]>  => {
   const response = await axios.get<Reservation[]>(
     `${api_url}/reservations?tripId=${tripId}`
   );
-  return response.data;
+  return response;
 };
+
+

@@ -1,122 +1,62 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  getReservationsByTripId,
-  getTripById,
-  Reservation,
-  updateTrip,
-} from "../service/api";
-import { Trip } from "../service/api";
+// import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getTripById } from "../service/api";
+// import { Trip } from "../interfaces/ITrips";
+import { ArrowRight } from "lucide-react";
+import { useTripReservations } from "../hooks/useTripReservations";
+import { useEffect, useState } from "react";
+import { Trip } from "../interfaces/ITrips";
 
 export default function TripDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [trip, setTrip] = useState<Trip | null>(null);
-  const [reservations, setReservations] = useState<Reservation[]>([
-    {
-      "id": 11,
-      "tripId": 1,
-      "passengerName": "João Silva",
-      "reservationDate": "2024-03-19T10:00",
-      "seatNumber": 1,
-      "departureCity": "Imperatriz",
-      "arrivalCity": "Brasília"
-    }
-  ]);
+  const [trip, setTrip] = useState<Trip>({} as Trip);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const tripData = await getTripById(Number(id));
-        const reservationsData = await getReservationsByTripId(Number(id));
-        setTrip(tripData);
-        setReservations(reservationsData);
-        setReservations(
-          Array.isArray(reservationsData) ? reservationsData : []
-        );
-      } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-        alert("Erro ao carregar dados da viagem");
-      }
-    };
-    loadData();
-  }, [id]);
-
-  const handleSave = async () => {
-    if (trip) {
-      try {
-        await updateTrip(trip.id, trip);
-        alert("Viagem atualizada com sucesso!");
-        navigate("/trips");
-      } catch (error) {
-        console.error("Erro ao atualizar:", error);
-        alert("Erro ao salvar alterações");
-      }
+    if (id) {
+      getTripById(Number(id)).then((trip) => setTrip(trip));
     }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    if (!trip) return;
-    setTrip({
-      ...trip,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  if (!trip) return <div>Carregando...</div>;
+  }, [id]);
+  const { data, isLoading, isError } = useTripReservations(Number(id));
 
   return (
     <div className="trip-details">
       <h1>Detalhes da Viagem</h1>
-
-      <div className="form-group">
-        <label>
-          Data e Hora:
-          <input
-            type="datetime-local"
-            name="departureDateTime"
-            value={trip.departureDateTime}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label>
-          Vagas Disponíveis:
-          <input
-            type="number"
-            name="seatsAvailable"
-            value={trip.seatsAvailable}
-            onChange={handleChange}
-            min="0"
-            max="50"
-          />
-        </label>
+      <div className="flex p-2 bg-sky-900 flex-col mb-2 ">
+        <p className="flex text-3xl items-center">
+          {trip.originState} <ArrowRight /> {trip.destinationState}
+        </p>
+        <p>Data e Hora: {new Date(trip.departureDateTime).toLocaleString()}</p>
       </div>
 
-      <h2>
-        Reservas ({reservations.length}/{trip.seatsAvailable})
-      </h2>
-      {reservations.length === 0 ? (
-        <p>Nenhuma reserva encontrada</p>
-      ) : (
-        <ul className="reservations-list">
-          {reservations?.map((reservation) => (
-            <li key={reservation.id}>
-              {reservation.passengerName} -
-              {new Date(reservation.reservationDate).toLocaleDateString()}
-            </li>
-          ))}
-        </ul>
+      {isLoading && <p>Carregando...</p>}
+      {!isLoading && isError && <p>Erro ao carregar reservas.</p>}
+      {!isLoading && !isError && (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Data da Reserva</th>
+              <th>Assento</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data?.data.map((reservation) => (
+              <tr key={reservation.id}>
+                <td>{reservation.passengerName}</td>
+                <td>
+                  {new Date(reservation.reservationDate).toLocaleString()}
+                </td>
+                <td>{reservation.seatNumber}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-end">
         <button onClick={() => navigate(-1)} className="btn-submit">
           Voltar
-        </button>
-        <button onClick={handleSave} className="btn-submit">
-          Salvar Alterações
         </button>
       </div>
     </div>
